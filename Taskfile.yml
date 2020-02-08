@@ -1,0 +1,15 @@
+version: '2'
+
+tasks:
+  build:
+    cmds:
+      - go build -o bin/bibliotheca -v -i cmd/bibliotheca/main.go
+
+  run:
+    cmds:
+      - go run cmd/bibliotheca/main.go
+
+  fmt:
+    cmds:
+      - go fmt ./...
+
