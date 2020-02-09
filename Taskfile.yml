@@ -13,3 +13,7 @@ tasks:
     cmds:
       - go fmt ./...
 
+  dc-build:
+    cmds:
+      - COMPOSE_DOCKER_CLI_BUILD=1 docker-compose build
+
