@@ -8,10 +8,12 @@ import (
 
 	"github.com/kelseyhightower/envconfig"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca"
+	"github.com/watiko/bibliotheca-go/internal/pkg"
 	"golang.org/x/sync/errgroup"
 )
 
 type Env struct {
+	pkg.DBEnv
 	Port int `default:"8080"`
 }
 

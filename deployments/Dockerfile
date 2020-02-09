@@ -1,4 +1,4 @@
-FROM golang:1.13.7-buster
+FROM golang:1.13.7-buster as build
 
 ENV AIR_VERSION 1.12.0
 ENV TASK_VERSION 2.8.0
@@ -18,7 +18,6 @@ RUN wget -O task_linux_amd64.deb \
   && rm task_linux_amd64.deb
 
 WORKDIR /app
-CMD air
 
 COPY ./go.mod .
 COPY ./go.mod .

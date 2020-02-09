@@ -2,16 +2,32 @@ version: '2'
 
 tasks:
   build:
+    deps: [build-api, build-migrate]
+
+  build-api:
     cmds:
       - go build -o bin/bibliotheca -v -i cmd/bibliotheca/main.go
+
+  build-migrate:
+    cmds:
+      - go build -o bin/migrate -v -i cmd/migrate/main.go
 
   run:
     cmds:
       - go run cmd/bibliotheca/main.go
 
+  migrate:
+    cmds:
+      - go run cmd/migrate/main.go
+
   fmt:
     cmds:
       - go fmt ./...
+
+  dc-up:
+    cmds:
+      - docker-compose up -d db api
+      - docker-compose logs -f
 
   dc-build:
     cmds:

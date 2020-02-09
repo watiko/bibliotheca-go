@@ -1,12 +1,39 @@
-version: '3'
+version: '3.7'
 
 services:
-  api:
+  go: &go
     build:
       context: .
-      dockerfile: deployments/live-reload/Dockerfile
+      dockerfile: deployments/Dockerfile
+      target: build
     volumes:
       - .:/app
+    environment:
+      APP_DB_HOST: db
+      APP_DB_PORT: 5432
+      APP_DB_USER: app
+      APP_DB_PASS: app
+      APP_DB_NAME: app
+
+  api:
+    <<: *go
+    command: air
     ports:
       - "${APP_PORT:-8080}:8080"
     tty: true
+
+  migrate:
+    <<: *go
+    command: task migrate
+
+  db:
+    image: postgres:12.1
+    environment:
+      POSTGRES_USER: app
+      POSTGRES_PASSWORD: app
+      POSTGRES_DB: app
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
