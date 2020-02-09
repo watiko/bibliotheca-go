@@ -9,5 +9,6 @@
 *.test
 
 /bin
+/tmp
 
 .idea
