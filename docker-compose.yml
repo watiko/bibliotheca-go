@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: deployments/Dockerfile
-      target: build
+      target: dev
     volumes:
       - .:/app
     environment:

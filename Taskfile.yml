@@ -1,5 +1,8 @@
 version: '2'
 
+vars:
+  GIT_COMMIT: { sh: git rev-parse --short HEAD }
+
 tasks:
   build:
     deps: [build-api, build-migrate]
@@ -19,6 +22,12 @@ tasks:
       - ./*.go
     generates:
       - bin/migrate{{exeExt}}
+
+  build-container:
+    cmds:
+      - docker build --target app --tag "bibliotheca-go:$TAG" -f deployments/Dockerfile .
+    env:
+      TAG: "{{default .GIT_COMMIT .TAG}}"
 
   run:
     cmds:
