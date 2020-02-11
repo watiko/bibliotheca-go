@@ -7,10 +7,18 @@ tasks:
   build-api:
     cmds:
       - go build -o bin/bibliotheca -v -i cmd/bibliotheca/main.go
+    sources:
+      - ./*.go
+    generates:
+      - bin/bibliotheca{{exeExt}}
 
   build-migrate:
     cmds:
       - go build -o bin/migrate -v -i cmd/migrate/main.go
+    sources:
+      - ./*.go
+    generates:
+      - bin/migrate{{exeExt}}
 
   run:
     cmds:
