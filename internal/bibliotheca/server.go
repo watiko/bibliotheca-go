@@ -9,6 +9,7 @@ import (
 func Router() http.Handler {
 	e := gin.New()
 
+	e.Use(gin.Logger())
 	e.Use(gin.Recovery())
 	e.GET("/", func(c *gin.Context) {
 		c.JSON(
