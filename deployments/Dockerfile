@@ -66,9 +66,15 @@ CMD ["/app/bin/bibliotheca"]
 
 EXPOSE 8080
 
-FROM gcr.io/distroless/base-debian10 as migration
 
-COPY ./scripts/migrations /app/migrations
+# use busybox as shell
+FROM gcr.io/distroless/base-debian10:debug as migration
+
+COPY ./scripts/migrations /app/scripts/migrations
+COPY ./scripts/migrate.sh /app/scripts/
 COPY --from=base /usr/local/bin/migrate /app/migrate
 
-CMD ["/app/migrate", "-source", "file:///app/migrations", "-database", "$APP_DB_URL", "up"]
+ENV PATH "/app:$PATH"
+WORKDIR /app
+
+CMD ["/app/scripts/migrate.sh", "up"]
