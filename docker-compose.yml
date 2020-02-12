@@ -9,11 +9,7 @@ services:
     volumes:
       - .:/app
     environment:
-      APP_DB_HOST: db
-      APP_DB_PORT: 5432
-      APP_DB_USER: app
-      APP_DB_PASS: app
-      APP_DB_NAME: app
+      APP_DB_URL: "postgres://app:app@db:5432/app?sslmode=disable"
 
   api:
     <<: *go

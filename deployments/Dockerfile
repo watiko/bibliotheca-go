@@ -1,6 +1,11 @@
 # syntax=docker/dockerfile:1.1.3-experimental
 # https://github.com/moby/buildkit/blob/master/frontend/dockerfile/docs/experimental.md
 
+ARG AIR_VERSION=1.12.0
+ARG TASK_VERSION=2.8.0
+ARG MIGRATE_VERSION=4.8.0
+
+
 FROM golang:1.13.7-buster as base
 
 RUN apt update \
@@ -8,11 +13,16 @@ RUN apt update \
   && apt clean \
   && rm --recursive --force /var/lib/apt/lists/*
 
-ENV TASK_VERSION 2.8.0
+ARG TASK_VERSION
 RUN wget -O task_linux_amd64.deb \
   https://github.com/go-task/task/releases/download/v${TASK_VERSION}/task_linux_amd64.deb \
   && apt install ./task_linux_amd64.deb \
   && rm task_linux_amd64.deb
+
+ARG MIGRATE_VERSION
+RUN wget https://github.com/golang-migrate/migrate/releases/download/v${MIGRATE_VERSION}/migrate.linux-amd64.tar.gz \
+  && tar xf migrate.linux-amd64.tar.gz \
+  && mv migrate.linux-amd64 /usr/local/bin/migrate
 
 WORKDIR /app
 
@@ -24,7 +34,12 @@ RUN go mod download
 
 FROM base as dev
 
-ENV AIR_VERSION 1.12.0
+RUN apt update \
+  && apt install -y postgresql-client-11 \
+  && apt clean \
+  && rm --recursive --force /var/lib/apt/lists/*
+
+ARG AIR_VERSION
 RUN wget -O /usr/local/bin/air \
   https://github.com/cosmtrek/air/raw/v${AIR_VERSION}/bin/linux/air \
   && chmod +x /usr/local/bin/air
@@ -50,3 +65,10 @@ COPY --from=build /tmp/app/bin/ /app/bin/
 CMD ["/app/bin/bibliotheca"]
 
 EXPOSE 8080
+
+FROM gcr.io/distroless/base-debian10 as migration
+
+COPY ./scripts/migrations /app/migrations
+COPY --from=base /usr/local/bin/migrate /app/migrate
+
+CMD ["/app/migrate", "-source", "file:///app/migrations", "-database", "$APP_DB_URL", "up"]

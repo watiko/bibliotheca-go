@@ -5,7 +5,7 @@ vars:
 
 tasks:
   build:
-    deps: [build-api, build-migrate]
+    deps: [build-api]
 
   build-api:
     cmds:
@@ -15,17 +15,10 @@ tasks:
     generates:
       - bin/bibliotheca{{exeExt}}
 
-  build-migrate:
-    cmds:
-      - go build -o bin/migrate -v -i cmd/migrate/main.go
-    sources:
-      - ./*.go
-    generates:
-      - bin/migrate{{exeExt}}
-
   build-container:
     cmds:
-      - docker build --target app --tag "bibliotheca-go:$TAG" -f deployments/Dockerfile .
+      - docker build -f deployments/Dockerfile --target app       --tag "bibliotheca-go:app-$TAG" .
+      - docker build -f deployments/Dockerfile --target migration --tag "bibliotheca-go:migration-$TAG" .
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
@@ -35,7 +28,7 @@ tasks:
 
   migrate:
     cmds:
-      - go run cmd/migrate/main.go
+      - migrate -source file://scripts/migrations -database "$APP_DB_URL" up
 
   fmt:
     cmds:
