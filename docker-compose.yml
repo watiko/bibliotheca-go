@@ -20,7 +20,11 @@ services:
 
   migrate:
     <<: *go
-    command: task migrate
+    entrypoint: scripts/migrate.sh
+
+  shell:
+    <<: *go
+    command: bash
 
   db:
     image: postgres:12.1

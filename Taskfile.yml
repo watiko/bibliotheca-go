@@ -28,7 +28,7 @@ tasks:
 
   migrate:
     cmds:
-      - migrate -source file://scripts/migrations -database "$APP_DB_URL" up
+      - ./scripts/migrate.sh up
 
   fmt:
     cmds:
