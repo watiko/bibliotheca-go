@@ -10,9 +10,9 @@ env:
 tasks:
   build:
     desc: Build the go binary.
-    deps: [build-api]
+    deps: [build:api]
 
-  build-api:
+  build:api:
     desc: Build the api binary.
     cmds:
       - go build -o bin/bibliotheca -v -i cmd/bibliotheca/main.go
@@ -21,7 +21,7 @@ tasks:
     generates:
       - bin/bibliotheca{{exeExt}}
 
-  build-container:
+  build:container:
     desc: Build the application containers.
     cmds:
       - docker build -f deployments/Dockerfile --target app       --tag "bibliotheca-go:app-$TAG" .
@@ -46,11 +46,11 @@ tasks:
 
   up:
     desc: Run the application in docker containers.
-    deps: [dc-build]
+    deps: [dc:build]
     cmds:
       - docker-compose up -d db api
 
-  dc-build:
+  dc:build:
     desc: Build the docker-compose's containers.
     cmds:
       - docker-compose build
