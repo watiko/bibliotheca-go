@@ -1,0 +1,19 @@
+description: ''
+x-tags:
+  - book
+type: object
+title: Book
+x-examples:
+  example-1:
+    isbn: '9781449318482'
+    title: The Art of Readable Code
+properties:
+  isbn:
+    type:
+      - string
+      - 'null'
+  title:
+    type: string
+required:
+  - isbn
+  - title

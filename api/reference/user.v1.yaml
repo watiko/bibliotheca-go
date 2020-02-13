@@ -1,0 +1,159 @@
+openapi: 3.0.0
+info:
+  title: User API
+  version: '1.0'
+servers:
+  - url: 'http://localhost:8080'
+paths:
+  /v1/book-shelves/:
+    get:
+      summary: Get all bookshelves.
+      tags:
+        - book
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/BookShelf'
+      operationId: get-v1-book-shelves
+      requestBody: {}
+    parameters: []
+  '/v1/book-shelves/{book-shelf-id}/books':
+    get:
+      summary: Get all books.
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/book/book.v1.yaml
+      operationId: get-v1-book-shelves-books
+      tags:
+        - book
+    parameters:
+      - $ref: '#/components/parameters/BookShelfId'
+    post:
+      summary: Create new book.
+      operationId: post-v1-book-shelves-books
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/book/book.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/book/book-post-data.v1.yaml
+  '/v1/books/{book-id}':
+    parameters:
+      - $ref: '#/components/parameters/BookId'
+    get:
+      summary: Get the book.
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/book/book.v1.yaml
+      operationId: get-v1-books-book-id
+    put:
+      summary: Update the book date.
+      operationId: put-v1-books-book-id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/book/book.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/book/book-post-data.v1.yaml
+  '/v1/books/{book-id}/borrow':
+    parameters:
+      - schema:
+          type: string
+        name: book-id
+        in: path
+        required: true
+    patch:
+      summary: Borrow the book.
+      tags:
+        - book
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/book/book.v1.yaml
+      operationId: patch-v1-books-book-id-borrow
+  '/v1/books/{book-id}/return':
+    parameters:
+      - schema:
+          type: string
+        name: book-id
+        in: path
+        required: true
+    patch:
+      summary: Return the book.
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/book/book.v1.yaml
+      operationId: patch-v1-books-book-id-return
+components:
+  schemas:
+    BookShelf:
+      title: BookShelf
+      type: object
+      x-tags:
+        - book
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - createdAt
+        - updatedAt
+  securitySchemes: {}
+  parameters:
+    BookShelfId:
+      schema:
+        type: string
+      name: book-shelf-id
+      in: path
+      required: true
+    BookId:
+      schema:
+        type: string
+      name: book-id
+      in: path
+      required: true

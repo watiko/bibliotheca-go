@@ -1,0 +1,12 @@
+allOf:
+  - $ref: ../id.v1.yaml
+  - $ref: ./book-state.v1.yaml
+  - $ref: ../timestamps.v1.yaml
+x-examples:
+  example-1:
+    id: '11111111'
+    isbn: '9781449318482'
+    title: The Art of Readable Code
+    borrowedBy: null
+    createdAt: '2017-07-21T17:32:28Z'
+    updatedAt: '2017-07-21T17:32:28Z'
