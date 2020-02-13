@@ -3,6 +3,10 @@ version: '2'
 vars:
   GIT_COMMIT: { sh: git rev-parse --short HEAD }
 
+env:
+  DOCKER_BUILDKIT: 1
+  COMPOSE_DOCKER_CLI_BUILD: 1
+
 tasks:
   build:
     desc: Build the go binary.
@@ -25,10 +29,15 @@ tasks:
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
-  migrate:
+  migrate:up:
     desc: Apply all migrations to the db.
     cmds:
       - docker-compose run --rm migrate up
+
+  migrate:add:
+    desc: Add new migration files.
+    cmds:
+      - docker-compose run --rm migrate create -ext sql -dir ./scripts/migrations {{.NAME}}
 
   fmt:
     desc: Format the all go codes.
@@ -45,7 +54,3 @@ tasks:
     desc: Build the docker-compose's containers.
     cmds:
       - docker-compose build
-
-env:
-  DOCKER_BUILDKIT: 1
-  COMPOSE_DOCKER_CLI_BUILD: 1
