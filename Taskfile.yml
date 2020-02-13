@@ -25,20 +25,17 @@ tasks:
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
-  run:
-    cmds:
-      - go run cmd/bibliotheca/main.go
-
   migrate:
+    desc: Apply all migrations to the db.
     cmds:
-      - ./scripts/migrate.sh up
+      - docker-compose run --rm migrate up
 
   fmt:
     desc: Format the all go codes.
     cmds:
       - go fmt ./...
 
-  dc-up:
+  up:
     desc: Run the application in docker containers.
     deps: [dc-build]
     cmds:
