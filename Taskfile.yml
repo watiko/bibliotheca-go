@@ -24,8 +24,8 @@ tasks:
   build:container:
     desc: Build the application containers.
     cmds:
-      - docker build -f deployments/Dockerfile --target app       --tag "bibliotheca-go:app-$TAG" .
-      - docker build -f deployments/Dockerfile --target migration --tag "bibliotheca-go:migration-$TAG" .
+      - docker build -f build/Dockerfile --target app       --tag "bibliotheca-go:app-$TAG" .
+      - docker build -f build/Dockerfile --target migration --tag "bibliotheca-go:migration-$TAG" .
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 

@@ -4,7 +4,7 @@ services:
   go: &go
     build:
       context: .
-      dockerfile: deployments/Dockerfile
+      dockerfile: build/Dockerfile
       target: dev
     volumes:
       - .:/app
