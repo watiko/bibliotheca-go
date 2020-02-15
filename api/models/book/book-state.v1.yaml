@@ -1,0 +1,11 @@
+title: book-state.v1.yaml
+allOf:
+  - type: object
+    properties:
+      borrowedBy:
+        type:
+          - string
+          - 'null'
+    required:
+      - borrowedBy
+  - $ref: ./book-post-data.v1.yaml
