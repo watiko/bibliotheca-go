@@ -44,6 +44,14 @@ tasks:
     cmds:
       - go fmt ./...
 
+  setup:
+    desc: Setup the db.
+    deps: [dc:build]
+    cmds:
+      - docker-compose up -d db
+      - sleep 3
+      - task: migrate:up
+
   up:
     desc: Run the application in docker containers.
     deps: [dc:build]
