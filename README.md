@@ -16,10 +16,10 @@ A WIP API backend for [bibliotheca-pwa](https://github.com/opt-tech/bibliotheca-
 
 ```console
 $ task setup
-$ task up
+$ task dc:up
 ```
 
-This example uses port number 8080. If you want use another port number, try `task up APP_PORT=18080`.
+This example uses port number 8080. If you want use another port number, try `env APP_PORT=18080 task dc:up`.
 
 ### Building
 

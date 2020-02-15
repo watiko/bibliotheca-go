@@ -29,6 +29,11 @@ tasks:
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
+  fmt:
+    desc: Format the all go codes.
+    cmds:
+      - go fmt ./...
+
   migrate:up:
     desc: Apply all migrations to the db.
     cmds:
@@ -39,12 +44,11 @@ tasks:
     cmds:
       - docker-compose run --rm migrate create -ext sql -dir ./scripts/migrations {{.NAME}}
 
-  fmt:
-    desc: Format the all go codes.
-    cmds:
-      - go fmt ./...
-
   setup:
+    desc: Initial setup.
+    deps: [dc:build]
+
+  setup:db:
     desc: Setup the db.
     deps: [dc:build]
     cmds:
@@ -52,7 +56,7 @@ tasks:
       - sleep 3
       - task: migrate:up
 
-  up:
+  dc:up:
     desc: Run the application in docker containers.
     deps: [dc:build]
     cmds:
