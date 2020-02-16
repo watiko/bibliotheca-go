@@ -14,22 +14,27 @@ import (
 
 type Env struct {
 	pkg.DBEnv
-	Port int `default:"8080"`
+	Port int    `default:"8080"`
+	Env  string `default:"dev"`
 }
 
 func main() {
 	var env Env
 
-	err := envconfig.Process("", &env)
+	err := envconfig.Process("APP", &env)
 	if err != nil {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}
 
 	var eg errgroup.Group
 
+	app := bibliotheca.App{
+		Debug: env.Env == "dev",
+	}
+
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.Port),
-		Handler:      bibliotheca.Router(),
+		Handler:      app.Router(),
 		ReadTimeout:  5 * time.Second,
 		WriteTimeout: 10 * time.Second,
 	}
