@@ -10,6 +10,7 @@ services:
       - .:/app
     environment:
       APP_DB_URL: "postgres://app:app@db:5432/app?sslmode=disable"
+      APP_ENV: dev
 
   api:
     <<: *go
