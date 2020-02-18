@@ -29,6 +29,11 @@ tasks:
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
+  test:
+    desc: Test the all go codes.
+    cmds:
+      - go test ./...
+
   fmt:
     desc: Format the all go codes.
     cmds:
