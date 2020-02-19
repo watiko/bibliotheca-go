@@ -25,6 +25,18 @@ tasks:
     env:
       TAG: "{{default .GIT_COMMIT .TAG}}"
 
+  install-tools:
+    desc: Install the tools.
+    cmds:
+      - go install golang.org/x/tools/cmd/goimports
+    env:
+      GOBIN: { sh: echo "$(PWD)/bin" }
+    sources:
+      - go.mod
+      - go.sum
+    generates:
+      - bin/goimports
+
   test:
     desc: Test the all go codes.
     cmds:
@@ -32,8 +44,14 @@ tasks:
 
   fmt:
     desc: Format the all go codes.
+    deps: [fmt:imports]
+    silent: true
+
+  fmt:imports:
+    desc: fix imports order and code formats.
+    silent: true
     cmds:
-      - go fmt ./...
+      - ./bin/goimports -w -local github.com/watiko/bibliotheca-go/ cmd internal
 
   migrate:up:
     desc: Apply all migrations to the db.

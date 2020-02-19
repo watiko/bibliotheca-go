@@ -44,6 +44,10 @@ RUN wget -O /usr/local/bin/air \
   https://github.com/cosmtrek/air/raw/v${AIR_VERSION}/bin/linux/air \
   && chmod +x /usr/local/bin/air
 
+RUN \
+  --mount=type=bind,rw,target=/app,source=. \
+  --mount=type=cache,target=/.cache \
+  task install-tools
 
 FROM base as build
 
