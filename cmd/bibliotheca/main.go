@@ -7,9 +7,10 @@ import (
 	"time"
 
 	"github.com/kelseyhightower/envconfig"
+	"golang.org/x/sync/errgroup"
+
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca"
 	"github.com/watiko/bibliotheca-go/internal/pkg"
-	"golang.org/x/sync/errgroup"
 )
 
 type Env struct {

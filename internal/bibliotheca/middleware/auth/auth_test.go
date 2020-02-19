@@ -1,8 +1,9 @@
 package auth
 
 import (
-	"github.com/dgrijalva/jwt-go"
 	"testing"
+
+	"github.com/dgrijalva/jwt-go"
 )
 
 func Test_emailFromTokenClaim_success(t *testing.T) {
