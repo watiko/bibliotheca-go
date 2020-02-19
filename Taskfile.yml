@@ -15,11 +15,7 @@ tasks:
   build:api:
     desc: Build the api binary.
     cmds:
-      - go build -o bin/bibliotheca -v -i cmd/bibliotheca/main.go
-    sources:
-      - ./*.go
-    generates:
-      - bin/bibliotheca{{exeExt}}
+      - go build -o bin/bibliotheca -i cmd/bibliotheca/main.go
 
   build:container:
     desc: Build the application containers.
