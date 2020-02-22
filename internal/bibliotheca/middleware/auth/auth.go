@@ -13,9 +13,15 @@ import (
 )
 
 func Auth() gin.HandlerFunc {
-	return func(c *gin.Context) {
-		jwtMiddleware := mkJwtMiddleware()
+	return authWithJWTMiddleware(defaultJWTMiddleware())
+}
 
+func authWithJWTMiddleware(jwtMiddleware *jwtmiddleware.JWTMiddleware) gin.HandlerFunc {
+	if jwtMiddleware == nil {
+		jwtMiddleware = defaultJWTMiddleware()
+	}
+
+	return func(c *gin.Context) {
 		if err := jwtMiddleware.CheckJWT(c.Writer, c.Request); err != nil {
 			c.AbortWithStatus(http.StatusUnauthorized)
 			c.Next()
@@ -114,13 +120,57 @@ func getKidIfFirebaseAuth(token *jwt.Token) (string, bool) {
 	return kid, ok
 }
 
-var httpTransport = httpcache.NewMemoryCacheTransport()
+type firebaseKeyGetter struct {
+	firebaseAuthCredentialUrl string
+	keyCache                  *lru.Cache
+	httpCacheTransport        http.RoundTripper
+}
 
-func fetchFirebaseAuthCredential() (*map[string]string, error) {
-	firebaseAuthCredentialUrl := "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+var defaultFirebaseAuthCredentialUrl = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
 
-	client := http.Client{Transport: httpTransport}
-	resp, err := client.Get(firebaseAuthCredentialUrl)
+func defaultFirebaseKeyGetter() *firebaseKeyGetter {
+	return newFirebaseKeyGetter(defaultFirebaseAuthCredentialUrl)
+}
+
+func newFirebaseKeyGetter(firebaseAuthCredentialUrl string) *firebaseKeyGetter {
+	return &firebaseKeyGetter{
+		firebaseAuthCredentialUrl: defaultFirebaseAuthCredentialUrl,
+		keyCache:                  lru.New(5),
+		httpCacheTransport:        httpcache.NewMemoryCacheTransport(),
+	}
+}
+
+func (f *firebaseKeyGetter) Get(kid string) (interface{}, error) {
+	if kid == "" {
+		return nil, errors.New("empty kid is passed")
+	}
+
+	if key, ok := f.keyCache.Get(kid); ok {
+		return key, nil
+	}
+
+	creds, err := f.fetchFirebaseAuthCredential()
+	if err != nil {
+		return nil, err
+	}
+
+	cred, ok := (*creds)[kid]
+	if !ok {
+		return nil, errors.New("JWT key does not found")
+	}
+
+	key, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cred))
+	if err != nil {
+		return nil, err
+	}
+
+	f.keyCache.Add(kid, key)
+	return key, nil
+}
+
+func (f *firebaseKeyGetter) fetchFirebaseAuthCredential() (*map[string]string, error) {
+	client := http.Client{Transport: f.httpCacheTransport}
+	resp, err := client.Get(f.firebaseAuthCredentialUrl)
 	if err != nil {
 		return nil, err
 	}
@@ -136,42 +186,30 @@ func fetchFirebaseAuthCredential() (*map[string]string, error) {
 	return &out, nil
 }
 
-var keyCache = lru.New(5)
+type validationKeyGetterFn = func(*jwt.Token) (interface{}, error)
 
-func validationKeyGetter(token *jwt.Token) (interface{}, error) {
-	kid, ok := getKidIfFirebaseAuth(token)
-	if !ok {
-		return nil, errors.New("invalid JWT Key is passed")
+func newValidationKeyGetter(firebaseKeyGetter *firebaseKeyGetter) validationKeyGetterFn {
+	return func(token *jwt.Token) (interface{}, error) {
+		kid, ok := getKidIfFirebaseAuth(token)
+		if !ok {
+			return nil, errors.New("invalid JWT is passed")
+		}
+
+		key, err := firebaseKeyGetter.Get(kid)
+		return key, err
 	}
-
-	if key, ok := keyCache.Get(kid); ok {
-		// use cache
-		return key, nil
-	}
-
-	creds, err := fetchFirebaseAuthCredential()
-	if err != nil {
-		return nil, err
-	}
-
-	cred, ok := (*creds)[kid]
-	if !ok {
-		return nil, errors.New("JWT key does not found")
-	}
-
-	key, err := jwt.ParseRSAPublicKeyFromPEM([]byte(cred))
-	if err != nil {
-		return nil, err
-	}
-
-	keyCache.Add(kid, key)
-	return key, nil
 }
 
-func mkJwtMiddleware() *jwtmiddleware.JWTMiddleware {
+func newJWTMiddlewareWithValidationKeyGetter(keyGetter validationKeyGetterFn) *jwtmiddleware.JWTMiddleware {
 	return jwtmiddleware.New(jwtmiddleware.Options{
-		ValidationKeyGetter: validationKeyGetter,
+		ValidationKeyGetter: keyGetter,
 		UserProperty:        userContextKey,
 		SigningMethod:       jwt.SigningMethodRS256,
 	})
+}
+
+func defaultJWTMiddleware() *jwtmiddleware.JWTMiddleware {
+	firebaseKeyGetter := defaultFirebaseKeyGetter()
+	keyGetter := newValidationKeyGetter(firebaseKeyGetter)
+	return newJWTMiddlewareWithValidationKeyGetter(keyGetter)
 }

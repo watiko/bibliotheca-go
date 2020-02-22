@@ -1,3 +1,9 @@
 package auth
 
-var EmailFromTokenClaims = emailFromTokenClaims
+var (
+	ExportEmailFromTokenClaims                    = emailFromTokenClaims
+	ExportAuthWithJWTMiddleware                   = authWithJWTMiddleware
+	ExportNewFirebaseKeyGetter                    = newFirebaseKeyGetter
+	ExportNewValidationKeyGetter                  = newValidationKeyGetter
+	ExportNewJWTMiddlewareWithValidationKeyGetter = newJWTMiddlewareWithValidationKeyGetter
+)
