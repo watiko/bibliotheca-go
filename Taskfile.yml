@@ -28,30 +28,24 @@ tasks:
   install-tools:
     desc: Install the tools.
     cmds:
-      - go install golang.org/x/tools/cmd/goimports
-    env:
-      GOBIN: { sh: echo "$(PWD)/bin" }
-    sources:
-      - go.mod
-      - go.sum
-    generates:
-      - bin/goimports
+      - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.6
 
   test:
     desc: Test the all go codes.
     cmds:
       - go test ./...
 
-  fmt:
-    desc: Format the all go codes.
-    deps: [fmt:imports]
-    silent: true
-
-  fmt:imports:
-    desc: fix imports order and code formats.
+  lint:
+    desc: Lint the all go codes.
     silent: true
     cmds:
-      - ./bin/goimports -w -local github.com/watiko/bibliotheca-go/ cmd internal
+      - ./bin/golangci-lint run
+
+  lint:fix:
+    desc: Fix the linter reported codes if possible.
+    silent: true
+    cmds:
+      - ./bin/golangci-lint run --fix
 
   migrate:up:
     desc: Apply all migrations to the db.

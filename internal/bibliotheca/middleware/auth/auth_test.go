@@ -42,9 +42,8 @@ func emailFromTokenClaimSuccess(t *testing.T) {
 
 func emailFromTokenClaimFail(t *testing.T) {
 	t.Helper()
-	var token *jwt.Token
 
-	token = &jwt.Token{
+	token := &jwt.Token{
 		Claims: jwt.MapClaims(map[string]interface{}{}),
 	}
 
@@ -56,7 +55,10 @@ func credentialMockedAuth(t *testing.T) (*httptest.Server, gin.HandlerFunc) {
 	t.Helper()
 
 	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		io.WriteString(w, firebaseMock.authCredentials)
+		_, err := io.WriteString(w, firebaseMock.authCredentials)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+		}
 	}))
 
 	f := ExportNewFirebaseKeyGetter(ts.URL)
@@ -68,7 +70,7 @@ func credentialMockedAuth(t *testing.T) (*httptest.Server, gin.HandlerFunc) {
 }
 
 func TestAuthMiddleware(t *testing.T) {
-	ts, auth := credentialMockedAuth()
+	ts, auth := credentialMockedAuth(t)
 	defer ts.Close()
 
 	router := gin.New()

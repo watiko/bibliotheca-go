@@ -1,0 +1,7 @@
+linter-settings:
+  goimports:
+    local-prefixes: github.com/watiko/bibliotheca-go
+
+linters:
+  enable:
+    - goimports
