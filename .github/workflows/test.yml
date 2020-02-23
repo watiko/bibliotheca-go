@@ -1,0 +1,32 @@
+  name: golang_test
+  on: [push]
+
+  jobs:
+    build:
+      name: all
+      runs-on: ubuntu-latest
+      steps:
+        - name: checkout
+          uses: actions/checkout@v1
+        - name: set up go
+          uses: actions/setup-go@v1
+          with:
+            go-version: 1.13.8
+        - name: set up task
+          run: curl -sL https://taskfile.dev/install.sh | sh
+        - name: cache
+          uses: actions/cache@v1
+          with:
+            path: ~/go/pkg/mod
+            key: ${{ runner.os }}-go-${{ hashFiles('**/go.sum') }}
+            restore-keys: |
+              ${{ runner.os }}-go-
+        - name: download modules
+          if: steps.cache.outputs.cache-hit != 'true'
+          run: go mod download
+        - name: install tools
+          run: ./bin/task install-tools
+        - name: lint
+          run: ./bin/task lint
+        - name: test
+          run: go test ./... -v
