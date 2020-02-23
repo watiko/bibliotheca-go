@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
-	"github.com/watiko/bibliotheca-go/internal/bibliotheca/middleware"
+
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/middleware/auth"
 )
 
 type App struct {
