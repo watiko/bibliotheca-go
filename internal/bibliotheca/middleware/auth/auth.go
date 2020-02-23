@@ -121,20 +121,20 @@ func getKidIfFirebaseAuth(token *jwt.Token) (string, bool) {
 }
 
 type firebaseKeyGetter struct {
-	firebaseAuthCredentialUrl string
+	firebaseAuthCredentialURL string
 	keyCache                  *lru.Cache
 	httpCacheTransport        http.RoundTripper
 }
 
-var defaultFirebaseAuthCredentialUrl = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
+var defaultFirebaseAuthCredentialURL = "https://www.googleapis.com/robot/v1/metadata/x509/securetoken@system.gserviceaccount.com"
 
 func defaultFirebaseKeyGetter() *firebaseKeyGetter {
-	return newFirebaseKeyGetter(defaultFirebaseAuthCredentialUrl)
+	return newFirebaseKeyGetter(defaultFirebaseAuthCredentialURL)
 }
 
-func newFirebaseKeyGetter(firebaseAuthCredentialUrl string) *firebaseKeyGetter {
+func newFirebaseKeyGetter(firebaseAuthCredentialURL string) *firebaseKeyGetter {
 	return &firebaseKeyGetter{
-		firebaseAuthCredentialUrl: defaultFirebaseAuthCredentialUrl,
+		firebaseAuthCredentialURL: defaultFirebaseAuthCredentialURL,
 		keyCache:                  lru.New(5),
 		httpCacheTransport:        httpcache.NewMemoryCacheTransport(),
 	}
@@ -170,7 +170,7 @@ func (f *firebaseKeyGetter) Get(kid string) (interface{}, error) {
 
 func (f *firebaseKeyGetter) fetchFirebaseAuthCredential() (*map[string]string, error) {
 	client := http.Client{Transport: f.httpCacheTransport}
-	resp, err := client.Get(f.firebaseAuthCredentialUrl)
+	resp, err := client.Get(f.firebaseAuthCredentialURL)
 	if err != nil {
 		return nil, err
 	}
