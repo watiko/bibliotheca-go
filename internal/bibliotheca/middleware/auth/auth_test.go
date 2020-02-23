@@ -68,7 +68,7 @@ func credentialMockedAuth(t *testing.T) (*httptest.Server, gin.HandlerFunc) {
 }
 
 func TestAuthMiddleware(t *testing.T) {
-	ts, auth := credentialMockedAuth()
+	ts, auth := credentialMockedAuth(t)
 	defer ts.Close()
 
 	router := gin.New()
