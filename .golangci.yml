@@ -5,3 +5,4 @@ linters-settings:
 linters:
   enable:
     - goimports
+    - golint
