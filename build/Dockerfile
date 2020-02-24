@@ -28,7 +28,7 @@ RUN go mod download
 
 FROM base as dev
 RUN apt update \
-  && apt install -y postgresql-client-11 \
+  && apt install -y postgresql-client-11 less \
   && apt clean \
   && rm --recursive --force /var/lib/apt/lists/*
 ARG AIR_VERSION
