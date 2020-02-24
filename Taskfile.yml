@@ -1,7 +1,7 @@
 version: '2'
 
 vars:
-  GIT_COMMIT: { sh: git rev-parse --short HEAD }
+  GIT_COMMIT: { sh: git rev-parse HEAD }
 
 env:
   DOCKER_BUILDKIT: 1
@@ -15,7 +15,7 @@ tasks:
   build:api:
     desc: Build the api binary.
     cmds:
-      - go build -o bin/bibliotheca -i cmd/bibliotheca/main.go
+      - go build -ldflags "-X main.commit={{.GIT_COMMIT}}" -o bin/bibliotheca -i cmd/bibliotheca/main.go
 
   build:container:
     desc: Build the application containers.
