@@ -34,10 +34,7 @@ func main() {
 	if commit == "" {
 		commit = "developing"
 	}
-	app := bibliotheca.App{
-		Debug:  env.Env == "dev",
-		Commit: commit,
-	}
+	app := bibliotheca.NewApp(env.Env, commit, env.DbURL)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.Port),

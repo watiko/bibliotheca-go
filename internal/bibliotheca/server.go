@@ -14,6 +14,13 @@ type App struct {
 	Commit string
 }
 
+func NewApp(env string, commit string, dbURL string) *App {
+	return &App{
+		Debug:  env == "dev",
+		Commit: commit,
+	}
+}
+
 func jwtPingHandler(app *App) gin.HandlerFunc {
 	return func(c *gin.Context) {
 		user, exists := auth.GetUser(c)
