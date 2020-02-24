@@ -1,0 +1,19 @@
+# used in docker container
+psql:
+  host: db
+  port: 5432
+  user: app
+  pass: app
+  dbname: app
+  schema: public
+  sslmode: disable
+  blacklist:
+    - schema_migrations
+
+output: internal/bibliotheca/models
+
+aliases:
+  tables:
+    books:
+      columns:
+        borrowed_by: borrowedUserId

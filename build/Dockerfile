@@ -35,9 +35,8 @@ ARG AIR_VERSION
 RUN wget -O /usr/local/bin/air \
   https://github.com/cosmtrek/air/raw/v${AIR_VERSION}/bin/linux/air \
   && chmod +x /usr/local/bin/air
-RUN \
-  --mount=type=bind,rw,target=/app,source=. \
-  task install-tools
+COPY Taskfile.yml .
+RUN task install-tools && mv ./bin/* /usr/local/bin
 
 
 FROM base as build
