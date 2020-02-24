@@ -32,7 +32,7 @@ services:
     command: bash
 
   db:
-    image: postgres:12.1
+    image: postgres:11.7
     ports:
       - 5432
     environment:
