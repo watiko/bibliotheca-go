@@ -23,12 +23,18 @@ services:
     <<: *go
     entrypoint: scripts/migrate.sh
 
+  psql:
+    <<: *go
+    command: bash -c 'psql $$APP_DB_URL'
+
   shell:
     <<: *go
     command: bash
 
   db:
     image: postgres:12.1
+    ports:
+      - 5432
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app

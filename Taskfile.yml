@@ -79,3 +79,19 @@ tasks:
     desc: Build the docker-compose's containers.
     cmds:
       - docker-compose build
+
+  dc:psql:
+    desc: Use psql in docker container.
+    cmds:
+      - docker-compose run --rm psql
+
+  dc:show-db-connection-string:
+    desc: Show the db connection string.
+    silent: true
+    cmds:
+      - echo "{{.DB_CONN_STR}}" | sed 's/db:5432/127.0.0.1:{{.DB_PORT}}/'
+    vars:
+      DB_PORT:
+        sh: 'docker-compose port db 5432 | cut -d: -f2'
+      DB_CONN_STR:
+        sh: docker-compose run --rm shell bash -c 'echo "$APP_DB_URL"'
