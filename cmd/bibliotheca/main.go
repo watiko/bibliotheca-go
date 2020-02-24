@@ -13,6 +13,8 @@ import (
 	"github.com/watiko/bibliotheca-go/internal/pkg"
 )
 
+var commit string
+
 type Env struct {
 	pkg.DBEnv
 	Port int    `default:"8080"`
@@ -29,9 +31,10 @@ func main() {
 
 	var eg errgroup.Group
 
-	app := bibliotheca.App{
-		Debug: env.Env == "dev",
+	if commit == "" {
+		commit = "developing"
 	}
+	app := bibliotheca.NewApp(env.Env, commit, env.DbURL)
 
 	server := &http.Server{
 		Addr:         fmt.Sprintf(":%d", env.Port),

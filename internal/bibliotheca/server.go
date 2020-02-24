@@ -2,6 +2,7 @@ package bibliotheca
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -9,7 +10,15 @@ import (
 )
 
 type App struct {
-	Debug bool
+	Debug  bool
+	Commit string
+}
+
+func NewApp(env string, commit string, dbURL string) *App {
+	return &App{
+		Debug:  env == "dev",
+		Commit: commit,
+	}
 }
 
 func jwtPingHandler(app *App) gin.HandlerFunc {
@@ -32,6 +41,21 @@ func jwtPingHandler(app *App) gin.HandlerFunc {
 	}
 }
 
+func statusHandler(app *App) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		c.JSON(
+			http.StatusOK,
+			gin.H{
+				"status":    "OK",
+				"timestamp": time.Now().Format(time.RFC3339),
+				"system": gin.H{
+					"commit": app.Commit,
+				},
+			},
+		)
+	}
+}
+
 func (app *App) Router() http.Handler {
 	e := gin.New()
 
@@ -46,6 +70,7 @@ func (app *App) Router() http.Handler {
 			},
 		)
 	})
+	e.GET("/status", statusHandler(app))
 
 	authRequired := e.Group("/")
 	authRequired.Use(auth.Auth())
