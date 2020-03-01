@@ -10,15 +10,14 @@ import (
 	"golang.org/x/sync/errgroup"
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca"
-	"github.com/watiko/bibliotheca-go/internal/pkg"
 )
 
 var commit string
 
 type Env struct {
-	pkg.DBEnv
-	Port int    `default:"8080"`
-	Env  string `default:"dev"`
+	Port  int    `default:"8080"`
+	Env   string `default:"dev"`
+	DbURL string `required:"true" split_words:"true"`
 }
 
 func main() {
