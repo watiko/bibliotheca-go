@@ -1,10 +1,7 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/sync/errgroup"
@@ -35,15 +32,8 @@ func main() {
 	}
 	app := bibliotheca.NewApp(env.Env, commit, env.DbURL)
 
-	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", env.Port),
-		Handler:      app.Router(),
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-
 	eg.Go(func() error {
-		return server.ListenAndServe()
+		return app.Run(env.Port)
 	})
 
 	if err := eg.Wait(); err != nil {

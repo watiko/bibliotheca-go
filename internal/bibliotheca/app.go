@@ -1,7 +1,9 @@
 package bibliotheca
 
 import (
+	"fmt"
 	"net/http"
+	"time"
 
 	"github.com/gin-gonic/gin"
 
@@ -46,4 +48,15 @@ func (app *App) Router() http.Handler {
 	}
 
 	return e
+}
+
+func (app *App) Run(port int) error {
+	server := &http.Server{
+		Addr:         fmt.Sprintf(":%d", port),
+		Handler:      app.Router(),
+		ReadTimeout:  5 * time.Second,
+		WriteTimeout: 10 * time.Second,
+	}
+
+	return server.ListenAndServe()
 }
