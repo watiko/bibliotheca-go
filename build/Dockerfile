@@ -6,7 +6,7 @@ ARG TASK_VERSION=2.8.0
 ARG MIGRATE_VERSION=4.8.0
 
 
-FROM golang:1.13.7-buster as base
+FROM golang:1.14.0-buster as base
 RUN apt update \
   && apt upgrade --yes \
   && apt clean \
