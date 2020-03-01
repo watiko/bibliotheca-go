@@ -6,14 +6,16 @@ import (
 	"github.com/gin-gonic/gin"
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase"
 )
 
 type Book struct {
 	*types.AppContext
+	usecase usecase.BookUsecase
 }
 
-func NewBook(ctx *types.AppContext) *Book {
-	return &Book{ctx}
+func NewBook(ctx *types.AppContext, usecase usecase.BookUsecase) *Book {
+	return &Book{ctx, usecase}
 }
 
 func (b Book) Mount(router gin.IRouter) {

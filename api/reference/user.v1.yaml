@@ -21,7 +21,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BookShelf'
+                  $ref: '#/components/schemas/Bookshelf'
       operationId: get-v1-book-shelves
       requestBody: {}
       tags:
@@ -43,7 +43,7 @@ paths:
       tags:
         - book
     parameters:
-      - $ref: '#/components/parameters/BookShelfId'
+      - $ref: '#/components/parameters/BookshelfId'
     post:
       summary: Create new book.
       operationId: post-v1-book-shelves-books
@@ -134,8 +134,8 @@ paths:
       description: ''
 components:
   schemas:
-    BookShelf:
-      title: BookShelf
+    Bookshelf:
+      title: Bookshelf
       type: object
       x-tags:
         - book
@@ -162,7 +162,7 @@ components:
       scheme: bearer
       bearerFormat: JWT
   parameters:
-    BookShelfId:
+    BookshelfId:
       schema:
         type: string
       name: book-shelf-id

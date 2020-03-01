@@ -9,17 +9,34 @@ import (
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler/controller"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/infra/persistence"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/middleware/auth"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase"
 )
 
 type App struct {
 	*types.AppContext
+	bookController      *controller.Book
+	bookshelfController *controller.Bookshelf
 }
 
 func NewApp(env string, commit string, dbURL string) *App {
 	ctx := types.NewAppContext(env, commit, dbURL)
-	return &App{ctx}
+
+	bookRepo := persistence.NewBookRepository(ctx)
+	bookUsecase := usecase.NewBookInteractor(ctx, bookRepo)
+	bookController := controller.NewBook(ctx, bookUsecase)
+
+	bookshelfRepo := persistence.NewBookshelfRepository(ctx)
+	bookshelfUsecase := usecase.NewBookshelfInteractor(ctx, bookshelfRepo)
+	bookshelfController := controller.NewBookshelf(ctx, bookshelfUsecase)
+
+	return &App{
+		AppContext:          ctx,
+		bookController:      bookController,
+		bookshelfController: bookshelfController,
+	}
 }
 
 func (app *App) Router() http.Handler {
@@ -39,8 +56,8 @@ func (app *App) Router() http.Handler {
 
 	apiGroup := e.Group("/v1", auth.Auth())
 	{
-		controller.NewBookShelf(app.AppContext).Mount(apiGroup)
-		controller.NewBook(app.AppContext).Mount(apiGroup)
+		app.bookController.Mount(apiGroup)
+		app.bookshelfController.Mount(apiGroup)
 	}
 
 	return e
