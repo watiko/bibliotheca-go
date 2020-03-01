@@ -10,6 +10,5 @@ require (
 	github.com/gregjones/httpcache v0.0.0-20190611155906-901d90724c79
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/stretchr/testify v1.5.1
-	github.com/volatiletech/sqlboiler v3.6.1+incompatible
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e
 )

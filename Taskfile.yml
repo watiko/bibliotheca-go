@@ -1,7 +1,7 @@
 version: '2'
 
 vars:
-  GIT_COMMIT: { sh: git rev-parse HEAD || echo "dev-in-container" }
+  GIT_COMMIT: { sh: git rev-parse HEAD }
 
 env:
   DOCKER_BUILDKIT: 1
@@ -27,15 +27,6 @@ tasks:
 
   install-tools:
     desc: Install the tools.
-    deps: [install-ci-tools]
-    cmds:
-      - go install github.com/volatiletech/sqlboiler
-      - go install github.com/volatiletech/sqlboiler/drivers/sqlboiler-psql
-    env:
-      GOBIN: { sh: echo "$(PWD)/bin" }
-
-  install-ci-tools:
-    desc: Install the tools for ci.
     cmds:
       - curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s v1.23.6
 
@@ -93,12 +84,6 @@ tasks:
     desc: Use psql in docker container.
     cmds:
       - docker-compose run --rm psql
-
-  dc:sqlboiler:
-    desc: Update the sql boiler plates.
-    cmds:
-      - |
-        docker-compose run --rm shell sqlboiler psql
 
   dc:show-db-connection-string:
     desc: Show the db connection string.
