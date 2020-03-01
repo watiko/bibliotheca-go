@@ -2,10 +2,10 @@ package bibliotheca
 
 import (
 	"net/http"
-	"time"
 
 	"github.com/gin-gonic/gin"
 
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/middleware/auth"
 )
 
@@ -18,41 +18,6 @@ func NewApp(env string, commit string, dbURL string) *App {
 	return &App{
 		Debug:  env == "dev",
 		Commit: commit,
-	}
-}
-
-func jwtPingHandler(app *App) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		user, exists := auth.GetUser(c)
-
-		if !exists {
-			c.Status(http.StatusInternalServerError)
-		} else {
-			c.JSON(
-				http.StatusOK,
-				gin.H{
-					"email":  user.Email,
-					"header": user.Token.Header,
-					"claims": user.Token.Claims,
-				},
-			)
-		}
-
-	}
-}
-
-func statusHandler(app *App) gin.HandlerFunc {
-	return func(c *gin.Context) {
-		c.JSON(
-			http.StatusOK,
-			gin.H{
-				"status":    "OK",
-				"timestamp": time.Now().Format(time.RFC3339),
-				"system": gin.H{
-					"commit": app.Commit,
-				},
-			},
-		)
 	}
 }
 
@@ -70,13 +35,13 @@ func (app *App) Router() http.Handler {
 			},
 		)
 	})
-	e.GET("/status", statusHandler(app))
+	e.GET("/status", handler.StatusHandler(app.Commit))
 
 	authRequired := e.Group("/")
 	authRequired.Use(auth.Auth())
 	{
 		if app.Debug {
-			authRequired.GET("/ping", jwtPingHandler(app))
+			authRequired.GET("/ping", handler.JwtPingHandler)
 		}
 	}
 
