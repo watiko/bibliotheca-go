@@ -19,6 +19,15 @@ services:
       - "${APP_PORT:-8080}:8080"
     tty: true
 
+  doc-user:
+    image: redocly/redoc
+    volumes:
+      - "$PWD/api:/usr/share/nginx/html/api"
+    ports:
+      - "${DOC_USER_PORT:-3000}:80"
+    environment:
+      SPEC_URL: api/reference/user.v1.yaml
+
   migrate:
     <<: *dev
     entrypoint: scripts/migrate.sh
