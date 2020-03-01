@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  go: &go
+  dev: &dev
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -13,22 +13,22 @@ services:
       APP_ENV: dev
 
   api:
-    <<: *go
+    <<: *dev
     command: air
     ports:
       - "${APP_PORT:-8080}:8080"
     tty: true
 
   migrate:
-    <<: *go
+    <<: *dev
     entrypoint: scripts/migrate.sh
 
   psql:
-    <<: *go
+    <<: *dev
     command: bash -c 'psql $$APP_DB_URL'
 
   shell:
-    <<: *go
+    <<: *dev
     command: bash
 
   db:
