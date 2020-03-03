@@ -1,7 +1,7 @@
 version: '3.7'
 
 services:
-  go: &go
+  dev: &dev
     build:
       context: .
       dockerfile: build/Dockerfile
@@ -13,22 +13,37 @@ services:
       APP_ENV: dev
 
   api:
-    <<: *go
+    <<: *dev
     command: air
     ports:
       - "${APP_PORT:-8080}:8080"
     tty: true
 
+  doc-user:
+    image: redocly/redoc
+    volumes:
+      - "$PWD/api:/usr/share/nginx/html/api"
+    ports:
+      - "${DOC_USER_PORT:-3000}:80"
+    environment:
+      SPEC_URL: api/reference/user.v1.yaml
+
   migrate:
-    <<: *go
+    <<: *dev
     entrypoint: scripts/migrate.sh
 
+  psql:
+    <<: *dev
+    command: bash -c 'psql $$APP_DB_URL'
+
   shell:
-    <<: *go
+    <<: *dev
     command: bash
 
   db:
-    image: postgres:12.1
+    image: postgres:11.7
+    ports:
+      - 5432
     environment:
       POSTGRES_USER: app
       POSTGRES_PASSWORD: app

@@ -1,6 +1,6 @@
 module github.com/watiko/bibliotheca-go
 
-go 1.13
+go 1.14
 
 require (
 	github.com/auth0/go-jwt-middleware v0.0.0-20190805220309-36081240882b

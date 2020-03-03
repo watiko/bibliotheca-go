@@ -2,14 +2,17 @@ openapi: 3.0.0
 info:
   title: User API
   version: '1.0'
+  description: |
+    # Authentication
+    Use JWT comes form Firebase Authentication.
 servers:
   - url: 'http://localhost:8080'
+security:
+  - firebaseAuth: []
 paths:
   /v1/book-shelves/:
     get:
       summary: Get all bookshelves.
-      tags:
-        - book
       responses:
         '200':
           description: OK
@@ -18,9 +21,11 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BookShelf'
+                  $ref: '#/components/schemas/Bookshelf'
       operationId: get-v1-book-shelves
       requestBody: {}
+      tags:
+        - ' book-shelf'
     parameters: []
   '/v1/book-shelves/{book-shelf-id}/books':
     get:
@@ -38,7 +43,7 @@ paths:
       tags:
         - book
     parameters:
-      - $ref: '#/components/parameters/BookShelfId'
+      - $ref: '#/components/parameters/BookshelfId'
     post:
       summary: Create new book.
       operationId: post-v1-book-shelves-books
@@ -54,12 +59,15 @@ paths:
           application/json:
             schema:
               $ref: ../models/book/book-post-data.v1.yaml
+      tags:
+        - book
   '/v1/books/{book-id}':
     parameters:
       - $ref: '#/components/parameters/BookId'
     get:
       summary: Get the book.
-      tags: []
+      tags:
+        - book
       responses:
         '200':
           description: OK
@@ -83,6 +91,8 @@ paths:
           application/json:
             schema:
               $ref: ../models/book/book-post-data.v1.yaml
+      tags:
+        - book
   '/v1/books/{book-id}/borrow':
     parameters:
       - schema:
@@ -111,7 +121,8 @@ paths:
         required: true
     patch:
       summary: Return the book.
-      tags: []
+      tags:
+        - book
       responses:
         '200':
           description: OK
@@ -120,10 +131,11 @@ paths:
               schema:
                 $ref: ../models/book/book.v1.yaml
       operationId: patch-v1-books-book-id-return
+      description: ''
 components:
   schemas:
-    BookShelf:
-      title: BookShelf
+    Bookshelf:
+      title: Bookshelf
       type: object
       x-tags:
         - book
@@ -143,9 +155,14 @@ components:
         - name
         - createdAt
         - updatedAt
-  securitySchemes: {}
+  securitySchemes:
+    firebaseAuth:
+      name: Firebase Key
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
   parameters:
-    BookShelfId:
+    BookshelfId:
       schema:
         type: string
       name: book-shelf-id

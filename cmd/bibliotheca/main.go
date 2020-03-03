@@ -1,24 +1,20 @@
 package main
 
 import (
-	"fmt"
 	"log"
-	"net/http"
-	"time"
 
 	"github.com/kelseyhightower/envconfig"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca"
-	"github.com/watiko/bibliotheca-go/internal/pkg"
 )
 
 var commit string
 
 type Env struct {
-	pkg.DBEnv
-	Port int    `default:"8080"`
-	Env  string `default:"dev"`
+	Port  int    `default:"8080"`
+	Env   string `default:"dev"`
+	DbURL string `required:"true" split_words:"true"`
 }
 
 func main() {
@@ -36,15 +32,8 @@ func main() {
 	}
 	app := bibliotheca.NewApp(env.Env, commit, env.DbURL)
 
-	server := &http.Server{
-		Addr:         fmt.Sprintf(":%d", env.Port),
-		Handler:      app.Router(),
-		ReadTimeout:  5 * time.Second,
-		WriteTimeout: 10 * time.Second,
-	}
-
 	eg.Go(func() error {
-		return server.ListenAndServe()
+		return app.Run(env.Port)
 	})
 
 	if err := eg.Wait(); err != nil {
