@@ -7,6 +7,7 @@ import (
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase/input"
 )
 
 type Bookshelf struct {
@@ -26,15 +27,65 @@ func (b Bookshelf) Mount(router gin.IRouter) {
 }
 
 func (b Bookshelf) getAllBookshelf(c *gin.Context) {
-	c.Status(http.StatusNotImplemented)
+	user := MustGetUser(c)
+	if user == nil {
+		return
+	}
+
+	out, err := b.usecase.GetAll(input.BookShelvesGet{
+		UserID: user.Email,
+	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, NewSingleErrorResponse("failed to get all bookshelves"))
+		return
+	}
+
+	c.JSON(http.StatusOK, out.Bookshelves)
 }
 
 func (b Bookshelf) getAllBooksFromBookshelf(c *gin.Context) {
-	_ = c.Param("book-shelf-id")
-	c.Status(http.StatusNotImplemented)
+	user := MustGetUser(c)
+	if user == nil {
+		return
+	}
+
+	bookshelfID := c.Param("book-shelf-id")
+	out, err := b.usecase.GetBooks(input.BooksGetFromBookshelf{
+		UserID:      user.Email,
+		BookshelfID: bookshelfID,
+	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, NewSingleErrorResponse("failed to get all books from the bookshelf"))
+		return
+	}
+
+	c.JSON(http.StatusOK, out.Books)
 }
 
 func (b Bookshelf) createBookForBookshelf(c *gin.Context) {
-	_ = c.Param("book-shelf-id")
-	c.Status(http.StatusNotImplemented)
+	user := MustGetUser(c)
+	if user == nil {
+		return
+	}
+
+	bookshelfID := c.Param("book-shelf-id")
+	var bookData BookData
+	err := c.ShouldBind(&bookData)
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusBadRequest, NewSingleErrorResponse("invalid json body"))
+		return
+	}
+
+	out, err := b.usecase.CreateBook(input.BookCreateForBookshelf{
+		UserID:      user.Email,
+		BookshelfID: bookshelfID,
+		Isbn:        bookData.Isbn,
+		Title:       bookData.Title,
+	})
+	if err != nil {
+		c.AbortWithStatusJSON(http.StatusInternalServerError, NewSingleErrorResponse("failed to create new book for the bookshelf"))
+		return
+	}
+
+	c.JSON(http.StatusOK, out.Book)
 }
