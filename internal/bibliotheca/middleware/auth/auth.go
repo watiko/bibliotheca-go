@@ -134,7 +134,7 @@ func defaultFirebaseKeyGetter() *firebaseKeyGetter {
 
 func newFirebaseKeyGetter(firebaseAuthCredentialURL string) *firebaseKeyGetter {
 	return &firebaseKeyGetter{
-		firebaseAuthCredentialURL: defaultFirebaseAuthCredentialURL,
+		firebaseAuthCredentialURL: firebaseAuthCredentialURL,
 		keyCache:                  lru.New(5),
 		httpCacheTransport:        httpcache.NewMemoryCacheTransport(),
 	}
