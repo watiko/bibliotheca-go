@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
+	"github.com/jmoiron/sqlx"
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler/controller"
@@ -19,10 +20,11 @@ type App struct {
 	*types.AppContext
 	bookController      *controller.Book
 	bookshelfController *controller.Bookshelf
+	db                  *sqlx.DB
 }
 
-func NewApp(env string, commit string, dbURL string) *App {
-	ctx := types.NewAppContext(env, commit, dbURL)
+func NewApp(env string, commit string, db *sqlx.DB) *App {
+	ctx := types.NewAppContext(env, commit)
 
 	bookRepo := persistence.NewBookRepository(ctx)
 	bookUsecase := usecase.NewBookInteractor(ctx, bookRepo)
@@ -36,6 +38,7 @@ func NewApp(env string, commit string, dbURL string) *App {
 		AppContext:          ctx,
 		bookController:      bookController,
 		bookshelfController: bookshelfController,
+		db:                  db,
 	}
 }
 
@@ -45,7 +48,7 @@ func (app *App) Router() http.Handler {
 	e.Use(gin.Logger())
 	e.Use(gin.Recovery())
 
-	e.GET("/status", handler.StatusHandler(app.Commit))
+	e.GET("/status", handler.StatusHandler(app.Commit, app.db))
 
 	authRequired := e.Group("/", auth.Auth())
 	{

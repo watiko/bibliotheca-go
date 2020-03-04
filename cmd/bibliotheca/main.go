@@ -3,7 +3,9 @@ package main
 import (
 	"log"
 
+	"github.com/jmoiron/sqlx"
 	"github.com/kelseyhightower/envconfig"
+	_ "github.com/lib/pq"
 	"golang.org/x/sync/errgroup"
 
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca"
@@ -25,12 +27,18 @@ func main() {
 		log.Fatalf("unable to decode into struct: %v", err)
 	}
 
-	var eg errgroup.Group
+	db, err := sqlx.Open("postgres", env.DbURL)
+	if err != nil {
+		log.Fatalf("failed to create db object: %v", err)
+	}
 
 	if commit == "" {
 		commit = "developing"
 	}
-	app := bibliotheca.NewApp(env.Env, commit, env.DbURL)
+
+	app := bibliotheca.NewApp(env.Env, commit, db)
+
+	var eg errgroup.Group
 
 	eg.Go(func() error {
 		return app.Run(env.Port)
