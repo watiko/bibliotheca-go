@@ -51,11 +51,17 @@ tasks:
     desc: Apply all migrations to the db.
     cmds:
       - docker-compose run --rm migrate up
+      - task: migrate:dump
 
   migrate:add:
     desc: Add new migration files.
     cmds:
       - docker-compose run --rm migrate create -ext sql -dir ./scripts/migrations {{.NAME}}
+
+  migrate:dump:
+    desc: Dump current database schema.
+    cmds:
+      - docker-compose run --rm shell ./scripts/dump_schema.sh
 
   setup:
     desc: Initial setup.
