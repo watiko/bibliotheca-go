@@ -4,7 +4,7 @@ import "time"
 
 type Book struct {
 	BookID      uint64  `db:"book_id,omitempty"`
-	BookshelfID uint64  `db:"book_shelf_id"`
+	BookshelfID uint64  `db:"bookshelf_id"`
 	Title       string  `db:"title"`
 	BorrowedBy  *string `db:"borrowed_by"`
 	Isbn        string  `db:"isbn"`
@@ -14,7 +14,7 @@ type Book struct {
 }
 
 type Bookshelf struct {
-	BookshelfID uint64 `db:"book_shelf_id,omitempty"`
+	BookshelfID uint64 `db:"bookshelf_id,omitempty"`
 	GroupID     uint64 `db:"group_id"`
 	Name        string `db:"name"`
 
