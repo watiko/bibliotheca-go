@@ -12,6 +12,7 @@ import (
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/handler/controller"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/infra/persistence"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/middleware/auth"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/transaction"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase"
 )
@@ -26,12 +27,14 @@ type App struct {
 func NewApp(env string, commit string, db *sqlx.DB) *App {
 	ctx := types.NewAppContext(env, commit)
 
-	bookRepo := persistence.NewBookRepository(ctx)
-	bookUsecase := usecase.NewBookInteractor(ctx, bookRepo)
+	txer := transaction.NewTransactioner(db)
+
+	bookRepo := persistence.NewBookRepository(ctx, db)
+	bookUsecase := usecase.NewBookInteractor(ctx, bookRepo, txer)
 	bookController := controller.NewBook(ctx, bookUsecase)
 
-	bookshelfRepo := persistence.NewBookshelfRepository(ctx)
-	bookshelfUsecase := usecase.NewBookshelfInteractor(ctx, bookshelfRepo)
+	bookshelfRepo := persistence.NewBookshelfRepository(ctx, db)
+	bookshelfUsecase := usecase.NewBookshelfInteractor(ctx, bookshelfRepo, txer)
 	bookshelfController := controller.NewBookshelf(ctx, bookshelfUsecase)
 
 	return &App{

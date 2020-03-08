@@ -1,9 +1,14 @@
 package repository
 
-import "github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/model"
+import (
+	"context"
 
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/model"
+)
+
+// TODO: precondition check
 type BookshelfRepository interface {
-	GetAllBookshelves(userID string) ([]*model.Bookshelf, error)
-	GetAllBooksFromBookshelf(userID string, bookshelfID uint64) ([]*model.Bookshelf, error)
-	CreateBookForBookshelf(userID string, book model.Book) (*model.Book, error)
+	GetAllBookshelvesForUser(ctx context.Context, userID string) ([]*model.Bookshelf, error)
+	GetAllBooksFromBookshelf(ctx context.Context, bookshelfID string) ([]*model.Book, error)
+	CreateBookForBookshelf(ctx context.Context, bookshelfID string, book model.Book) error
 }

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/repository"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/transaction"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase/input"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase/output"
@@ -19,10 +20,11 @@ type BookUsecase interface {
 type bookInteractor struct {
 	*types.AppContext
 	bookRepo repository.BookRepository
+	transaction.Transactioner
 }
 
-func NewBookInteractor(ctx *types.AppContext, bookRepo repository.BookRepository) BookUsecase {
-	bookInteractor := bookInteractor{AppContext: ctx, bookRepo: bookRepo}
+func NewBookInteractor(ctx *types.AppContext, bookRepo repository.BookRepository, txer transaction.Transactioner) BookUsecase {
+	bookInteractor := bookInteractor{AppContext: ctx, bookRepo: bookRepo, Transactioner: txer}
 	return &bookInteractor
 }
 

@@ -2,6 +2,7 @@ package usecase
 
 import (
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/repository"
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/transaction"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/types"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase/input"
 	"github.com/watiko/bibliotheca-go/internal/bibliotheca/usecase/output"
@@ -18,10 +19,11 @@ type BookshelfUsecase interface {
 type bookshelfInteractor struct {
 	*types.AppContext
 	bookshelfRepo repository.BookshelfRepository
+	transaction.Transactioner
 }
 
-func NewBookshelfInteractor(appContext *types.AppContext, bookshelfRepo repository.BookshelfRepository) BookshelfUsecase {
-	return &bookshelfInteractor{AppContext: appContext, bookshelfRepo: bookshelfRepo}
+func NewBookshelfInteractor(appContext *types.AppContext, bookshelfRepo repository.BookshelfRepository, txer transaction.Transactioner) BookshelfUsecase {
+	return &bookshelfInteractor{AppContext: appContext, bookshelfRepo: bookshelfRepo, Transactioner: txer}
 }
 
 func (b bookshelfInteractor) GetAll(data input.BookShelvesGet) (*output.BookshelvesGet, error) {

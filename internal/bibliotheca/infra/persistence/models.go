@@ -1,13 +1,16 @@
 package persistence
 
-import "time"
+import (
+	"database/sql"
+	"time"
+)
 
 type Book struct {
-	BookID      uint64  `db:"book_id,omitempty"`
-	BookshelfID uint64  `db:"bookshelf_id"`
-	Title       string  `db:"title"`
-	BorrowedBy  *string `db:"borrowed_by"`
-	Isbn        string  `db:"isbn"`
+	BookID      uint64         `db:"book_id,omitempty"`
+	BookshelfID uint64         `db:"bookshelf_id"`
+	Title       string         `db:"title"`
+	BorrowedBy  sql.NullString `db:"borrowed_by"`
+	Isbn        string         `db:"isbn"`
 
 	UpdatedAt time.Time `db:"updated_at,omitempty"`
 	CreatedAt time.Time `db:"created_at,omitempty"`
