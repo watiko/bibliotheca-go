@@ -36,7 +36,7 @@ func (r bookshelfRepo) GetAllBookshelvesForUser(ctx context.Context, userID stri
 	bookshelves := make([]*model.Bookshelf, len(dbBookshelves))
 	for i, bookshelf := range dbBookshelves {
 		bookshelves[i] = &model.Bookshelf{
-			BookshelfID: bookshelf.BookshelfID.String(),
+			BookshelfID: model.BookshelfID(bookshelf.BookshelfID.String()),
 			Name:        bookshelf.Name,
 			UpdatedAt:   bookshelf.UpdatedAt,
 			CreatedAt:   bookshelf.CreatedAt,
@@ -50,6 +50,6 @@ func (r bookshelfRepo) GetAllBooksFromBookshelf(ctx context.Context, bookshelfID
 	panic("implement me")
 }
 
-func (r bookshelfRepo) CreateBookForBookshelf(ctx context.Context, bookshelfID string, book model.Book) error {
+func (r bookshelfRepo) CreateBookForBookshelf(ctx context.Context, book model.Book) error {
 	panic("implement me")
 }

@@ -2,8 +2,10 @@ package model
 
 import "time"
 
+type UserID string
+
 type User struct {
-	UserID string `json:"id"`
+	UserID UserID `json:"id"`
 	Name   string `json:"name"`
 	Email  string `json:"email"`
 

@@ -10,5 +10,5 @@ import (
 type BookshelfRepository interface {
 	GetAllBookshelvesForUser(ctx context.Context, userID string) ([]*model.Bookshelf, error)
 	GetAllBooksFromBookshelf(ctx context.Context, bookshelfID string) ([]*model.Book, error)
-	CreateBookForBookshelf(ctx context.Context, bookshelfID string, book model.Book) error
+	CreateBookForBookshelf(ctx context.Context, book model.Book) error
 }
