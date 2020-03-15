@@ -2,9 +2,11 @@ package model
 
 import "time"
 
+type BookshelfID string
+
 type Bookshelf struct {
-	BookshelfID string `json:"bookshelfId"`
-	Name        string `json:"name"`
+	BookshelfID BookshelfID `json:"id"`
+	Name        string      `json:"name"`
 
 	UpdatedAt time.Time `json:"updatedAt"`
 	CreatedAt time.Time `json:"createdAt"`

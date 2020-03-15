@@ -1,10 +1,16 @@
 package repository
 
-import "github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/model"
+import (
+	"context"
 
+	"github.com/watiko/bibliotheca-go/internal/bibliotheca/domain/model"
+)
+
+// TODO: precondition check
 type BookRepository interface {
-	GetBookByID(userID string, bookID string) (*model.Book, error)
-	UpdateBookByID(userID string, book model.Book) (*model.Book, error)
-	BorrowBookByID(userID string, bookID string) (*model.Book, error)
-	ReturnBookByID(userID string, bookID string) (*model.Book, error)
+	NextID() model.BookID
+	GetBookByID(ctx context.Context, bookID string) (*model.Book, error)
+	UpdateBook(ctx context.Context, book model.Book) error
+	BorrowBook(ctx context.Context, userID string, bookID string) error
+	ReturnBook(ctx context.Context, userID string, bookID string) error
 }
