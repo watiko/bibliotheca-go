@@ -12,6 +12,7 @@ require (
 	github.com/jmoiron/sqlx v1.2.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.0.0
+	github.com/oklog/ulid/v2 v2.0.2
 	github.com/stretchr/testify v1.5.1
 	github.com/testcontainers/testcontainers-go v0.3.1
 	golang.org/x/sync v0.0.0-20190911185100-cd5d95a43a6e

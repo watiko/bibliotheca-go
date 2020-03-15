@@ -2,7 +2,6 @@ package persistence
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/jmoiron/sqlx"
 
@@ -37,7 +36,7 @@ func (r bookshelfRepo) GetAllBookshelvesForUser(ctx context.Context, userID stri
 	bookshelves := make([]*model.Bookshelf, len(dbBookshelves))
 	for i, bookshelf := range dbBookshelves {
 		bookshelves[i] = &model.Bookshelf{
-			BookshelfID: fmt.Sprintf("%d", bookshelf.BookshelfID),
+			BookshelfID: bookshelf.BookshelfID.String(),
 			Name:        bookshelf.Name,
 			UpdatedAt:   bookshelf.UpdatedAt,
 			CreatedAt:   bookshelf.CreatedAt,

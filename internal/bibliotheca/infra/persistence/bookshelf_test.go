@@ -42,9 +42,9 @@ func Test_bookshelfRepo_GetAllBookshelves(t *testing.T) {
 		want    []*model.Bookshelf
 		wantErr bool
 	}{
-		{name: "alice", userID: "1", want: []*model.Bookshelf{&fixture.Bookshelves.A1, &fixture.Bookshelves.A2, &fixture.Bookshelves.Common1}, wantErr: false},
-		{name: "bob", userID: "2", want: []*model.Bookshelf{&fixture.Bookshelves.Common1, &fixture.Bookshelves.B1}, wantErr: false},
-		{name: "charles", userID: "3", want: []*model.Bookshelf{&fixture.Bookshelves.B1}, wantErr: false},
+		{name: "alice", userID: "01E00GT5R0T01GEEH16YDGCCP4", want: []*model.Bookshelf{&fixture.Bookshelves.A1, &fixture.Bookshelves.A2, &fixture.Bookshelves.Common1}, wantErr: false},
+		{name: "bob", userID: "01E00GT6Q870BX5EQVPS8KD4AT", want: []*model.Bookshelf{&fixture.Bookshelves.Common1, &fixture.Bookshelves.B1}, wantErr: false},
+		{name: "charles", userID: "01E00GT7PG35FGSG0TWZ6CDWCJ", want: []*model.Bookshelf{&fixture.Bookshelves.B1}, wantErr: false},
 		{name: "not_existing_user", userID: "100", want: []*model.Bookshelf{}, wantErr: true},
 	}
 	for _, tt := range tests {
